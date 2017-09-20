@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <title>WebUploader演示</title>
+    <link rel="stylesheet" type="text/css" href="webuploader.css"/>
+    <link rel="stylesheet" type="text/css" href="style.css"/>
+    <style>
+        .color {
+            background-color: black;
+            height: 30px;
+            width: 10px;
+        }
+    </style>
+</head>
+<body>
+
+
+
+<script type="text/javascript" src="./jquery.js"></script>
+<script type="text/javascript" src="./webuploader.js"></script>
+<script>
+    var str = `
+                <div id="" class="wu-example">
+                    <div id="" class="uploader-list"></div>
+                    <div class="btns">
+                        <div class="picker">选择文件</div>
+                    </div>
+                    <div class="process">
+                    </div>
+                </div>`
+    function addCurrenFlag() {
+        $(".current").removeClass("current");
+        $(this).parents(".wu-example").find(".uploader-list").addClass("current");
+    }
+    
+    
+    $(function () {
+
+        // 动态dom
+        for (var i = 0; i < 10; i++) {
+            $("body").append(str);
+        }
+
+        // 标记操作元素  核心思想
+        $("body").on("click",".picker",addCurrenFlag)
+
+        var uploader = WebUploader.create({
+
+            // swf文件路径
+            swf: 'expressInstall.swf',
+
+            // 文件接收服务端。
+            server: '/',
+
+            // 选择文件的按钮。可选。
+            // 内部根据当前运行是创建，可能是input元素，也可能是flash.
+            pick: '.picker',
+
+            // 不压缩image, 默认如果是jpeg，文件上传前会压缩一把再上传！
+            resize: false,
+            auto: true,
+            duplicate:true
+        });
+
+        // 当有文件被添加进队列的时候
+        uploader.on('fileQueued', function (file) {
+            console.log(file);
+
+        });
+
+        // 文件上传过程中创建进度条实时显示。
+        uploader.on('uploadProgress', function (file, percentage) {
+//            $(".color").css('width', percentage * 100 + '%');
+        });
+
+        uploader.on('uploadSuccess', function (file) {
+//            $('#' + file.id).find('p.state').text('已上传');
+        });
+
+        uploader.on('uploadError', function (file,a) {
+            $(".current").append("上传失败")
+        });
+
+        uploader.on('uploadComplete', function (file) {
+            $(".current").append("上传完成")
+        });
+
+
+    })
+</script>
+</body>
+</html>
